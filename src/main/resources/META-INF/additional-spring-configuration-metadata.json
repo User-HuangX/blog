@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "blog.author.password",
+      "type": "java.lang.String",
+      "description": "Password used to authorize post creation."
+    },
+    {
+      "name": "blog.upload.dir",
+      "type": "java.lang.String",
+      "description": "Directory path where uploaded images are stored."
+    }
+  ]
+}
