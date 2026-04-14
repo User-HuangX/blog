@@ -1,35 +1,15 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: my_blog_pgsql
-    environment:
-      POSTGRES_DB: my_blog
-      POSTGRES_USER: my_blog
-      POSTGRES_PASSWORD: my_blog
-    ports:
-      - "5432:5432"
-    volumes:
-      - ${HOME}/blog/data/pgsql:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U my_blog -d my_blog"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    restart: unless-stopped
-
   app:
     image: my_blog_app:local
     build:
       context: .
       dockerfile: Dockerfile
     container_name: my_blog_app
-    depends_on:
-      postgres:
-        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my_blog
-      SPRING_DATASOURCE_USERNAME: my_blog
-      SPRING_DATASOURCE_PASSWORD: my_blog
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST:-101.34.250.167}:${DB_PORT:-5432}/${DB_NAME:-my_blog}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-my_blog}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-my_blog}
+      SPRING_SQL_INIT_MODE: ${SPRING_SQL_INIT_MODE:-never}
       BLOG_AUTHOR_PASSWORD: ${BLOG_AUTHOR_PASSWORD:-change-me}
     expose:
       - "8080"

@@ -6,9 +6,44 @@
       "description": "Password used to authorize post creation."
     },
     {
-      "name": "blog.upload.dir",
+      "name": "blog.author.login-rate-limit.max-attempts",
+      "type": "java.lang.Integer",
+      "description": "Maximum failed login attempts allowed in a rate-limit window."
+    },
+    {
+      "name": "blog.author.login-rate-limit.window-seconds",
+      "type": "java.lang.Long",
+      "description": "Rate-limit window length in seconds for author login attempts."
+    },
+    {
+      "name": "app.db.host",
       "type": "java.lang.String",
-      "description": "Directory path where uploaded images are stored."
+      "description": "Remote PostgreSQL host."
+    },
+    {
+      "name": "app.db.port",
+      "type": "java.lang.Integer",
+      "description": "Remote PostgreSQL port."
+    },
+    {
+      "name": "app.db.name",
+      "type": "java.lang.String",
+      "description": "Remote PostgreSQL database name."
+    },
+    {
+      "name": "app.db.user",
+      "type": "java.lang.String",
+      "description": "Remote PostgreSQL username."
+    },
+    {
+      "name": "app.db.password",
+      "type": "java.lang.String",
+      "description": "Remote PostgreSQL password."
+    },
+    {
+      "name": "app.db.auto-migrate",
+      "type": "java.lang.Boolean",
+      "description": "Whether startup should auto-apply lightweight schema patches."
     }
   ]
 }

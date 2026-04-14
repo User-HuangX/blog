@@ -13,6 +13,7 @@ public class PostMeta {
     private Long id;
     private String title;
     private String authorName;
+    private Boolean isPublished;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -54,5 +55,13 @@ public class PostMeta {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Boolean getIsPublished() {
+        return isPublished;
+    }
+
+    public void setIsPublished(Boolean published) {
+        isPublished = published;
     }
 }
