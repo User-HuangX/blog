@@ -2,6 +2,8 @@ package com.example.my_blog.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class AuthorSessionService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthorSessionService.class);
 
     private static final String AUTHOR_SESSION_KEY = "AUTHOR_AUTHENTICATED";
 
@@ -49,6 +53,11 @@ public class AuthorSessionService {
             }
 
             if (!postService.matchesAuthorPassword(providedPassword)) {
+                boolean missing = providedPassword == null || providedPassword.isBlank();
+                log.warn(
+                        "Author login rejected: {} (check BLOG_AUTHOR_PASSWORD / blog.author.password matches what you type; password never logged here).",
+                        missing ? "no password submitted" : "password mismatch"
+                );
                 window.failCount++;
                 if (window.failCount >= maxAttempts) {
                     throw new ResponseStatusException(

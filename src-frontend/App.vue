@@ -42,44 +42,46 @@
               />
             </label>
             <label>正文</label>
-            <div class="editor-toolbar">
-              <select v-model="fontSizeRef" @change="changeFontSize">
-                <option value="1">字号 12</option>
-                <option value="2">字号 14</option>
-                <option value="3">字号 16</option>
-                <option value="4">字号 18</option>
-                <option value="5">字号 24</option>
-              </select>
-              <button type="button" class="secondary" @click="setParagraph('P')">正文</button>
-              <button type="button" class="secondary" @click="setParagraph('H2')">H2</button>
-              <button type="button" class="secondary" @click="setParagraph('H3')">H3</button>
-              <button type="button" class="secondary" @click="applyCommand('bold')">加粗</button>
-              <button type="button" class="secondary" @click="applyCommand('italic')">斜体</button>
-              <button type="button" class="secondary" @click="applyCommand('underline')">下划线</button>
-              <button type="button" class="secondary" @click="applyCommand('strikeThrough')">删除线</button>
-              <button type="button" class="secondary" @click="applyCommand('insertUnorderedList')">无序列表</button>
-              <button type="button" class="secondary" @click="applyCommand('insertOrderedList')">有序列表</button>
-              <button type="button" class="secondary" @click="applyCommand('formatBlock', 'blockquote')">引用</button>
-              <button type="button" class="secondary" @click="applyCommand('insertHorizontalRule')">分割线</button>
-              <button type="button" class="secondary" @click="insertLink">超链接</button>
-              <button type="button" class="secondary" @click="applyCommand('unlink')">取消链接</button>
-              <button type="button" class="secondary" @click="insertRemoteImage">网络图</button>
-              <button type="button" class="secondary" @click="selectImage">上传图片</button>
-              <button type="button" class="secondary" @click="insertTable">插入表格</button>
-              <input
-                ref="imageInputRef"
-                type="file"
-                accept="image/*"
-                class="hidden-input"
-                @change="uploadImage"
-              />
+            <div class="editor-shell">
+              <aside class="editor-toolbar" aria-label="正文格式">
+                <select v-model="fontSizeRef" @change="changeFontSize">
+                  <option value="1">字号 12</option>
+                  <option value="2">字号 14</option>
+                  <option value="3">字号 16</option>
+                  <option value="4">字号 18</option>
+                  <option value="5">字号 24</option>
+                </select>
+                <button type="button" class="secondary" @click="setParagraph('P')">正文</button>
+                <button type="button" class="secondary" @click="setParagraph('H2')">H2</button>
+                <button type="button" class="secondary" @click="setParagraph('H3')">H3</button>
+                <button type="button" class="secondary" @click="applyCommand('bold')">加粗</button>
+                <button type="button" class="secondary" @click="applyCommand('italic')">斜体</button>
+                <button type="button" class="secondary" @click="applyCommand('underline')">下划线</button>
+                <button type="button" class="secondary" @click="applyCommand('strikeThrough')">删除线</button>
+                <button type="button" class="secondary" @click="applyCommand('insertUnorderedList')">无序列表</button>
+                <button type="button" class="secondary" @click="applyCommand('insertOrderedList')">有序列表</button>
+                <button type="button" class="secondary" @click="applyCommand('formatBlock', 'blockquote')">引用</button>
+                <button type="button" class="secondary" @click="applyCommand('insertHorizontalRule')">分割线</button>
+                <button type="button" class="secondary" @click="insertLink">超链接</button>
+                <button type="button" class="secondary" @click="applyCommand('unlink')">取消链接</button>
+                <button type="button" class="secondary" @click="insertRemoteImage">网络图</button>
+                <button type="button" class="secondary" @click="selectImage">上传图片</button>
+                <button type="button" class="secondary" @click="insertTable">插入表格</button>
+                <input
+                  ref="imageInputRef"
+                  type="file"
+                  accept="image/*"
+                  class="hidden-input"
+                  @change="uploadImage"
+                />
+              </aside>
+              <div
+                ref="editorRef"
+                class="rich-editor"
+                contenteditable="true"
+                @input="syncEditorContent"
+              ></div>
             </div>
-            <div
-              ref="editorRef"
-              class="rich-editor"
-              contenteditable="true"
-              @input="syncEditorContent"
-            ></div>
             <div class="compose-actions">
               <button type="button" class="secondary" @click="loadLatestDraft(true)">加载草稿</button>
               <button type="button" class="secondary" @click="saveDraft">保存草稿</button>

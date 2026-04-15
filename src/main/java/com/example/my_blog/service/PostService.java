@@ -10,6 +10,9 @@ import com.example.my_blog.dto.response.PostListItemResponse;
 import com.example.my_blog.exception.NotFoundException;
 import com.example.my_blog.mapper.PostContentMapper;
 import com.example.my_blog.mapper.PostMetaMapper;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,8 @@ import java.util.List;
 
 @Service
 public class PostService {
+
+    private static final Logger log = LoggerFactory.getLogger(PostService.class);
 
     private final PostMetaMapper postMetaMapper;
     private final PostContentMapper postContentMapper;
@@ -34,6 +39,20 @@ public class PostService {
         this.postMetaMapper = postMetaMapper;
         this.postContentMapper = postContentMapper;
         this.authorPassword = authorPassword == null ? "" : authorPassword.trim();
+    }
+
+    @PostConstruct
+    void logAuthorPasswordConfigured() {
+        if (authorPassword.isEmpty()) {
+            log.warn(
+                    "Author password is not configured (empty). Set blog.author.password or BLOG_AUTHOR_PASSWORD; author login will fail."
+            );
+            return;
+        }
+        log.info(
+                "Author password loaded from configuration (length={} chars, value not logged). If login fails, align client password or env BLOG_AUTHOR_PASSWORD.",
+                authorPassword.length()
+        );
     }
 
     @Transactional(readOnly = true)
