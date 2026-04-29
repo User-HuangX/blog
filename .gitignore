@@ -61,3 +61,12 @@ logs/
 *.tmp
 *.bak
 .claude/
+
+build-images.sh
+docker-compose.remote.yml
+docker-compose.yml
+Dockerfile
+Dockerfile.frontend
+CLAUDE.md
+.sdkmanrc
+scripts
