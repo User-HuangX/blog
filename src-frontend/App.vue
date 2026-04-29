@@ -1,42 +1,52 @@
 <template>
     <div class="layout">
+        <!-- ═══ Topbar ═══ -->
         <header class="topbar">
             <div class="topbar-inner">
-                <div>
-                    <h1>Earth丿的个人博客</h1>
-                </div>
+                <h1>阅读我</h1>
                 <div class="flex flex-wrap items-center gap-2">
-                    <Button type="button" @click="onAuthorAction">
-                        {{ isAuthor ? "作者操作" : "作者模式" }}
-                    </Button>
-                    <Button v-if="isAuthor" type="button" variant="secondary" @click="logoutAuthor">
+                    <button
+                        type="button"
+                        class="btn"
+                        :class="isAuthor ? 'btn--warm' : 'btn--primary'"
+                        @click="onAuthorAction"
+                    >
+                        {{ isAuthor ? "作者" : "登录" }}
+                    </button>
+                    <button v-if="isAuthor" type="button" class="btn btn--ghost" @click="logoutAuthor">
                         退出
-                    </Button>
+                    </button>
                 </div>
             </div>
         </header>
 
+        <!-- ═══ Main ═══ -->
         <main class="container">
             <Transition name="view-switch" mode="out-in">
-                <Card
+
+                <!-- ─── Write / Edit View ─── -->
+                <div
                     v-if="currentView === 'write'"
                     key="compose-view"
-                    class="border-blue-100 bg-gradient-to-br from-blue-50/70 via-white to-slate-50/90 p-0 shadow-md"
+                    class="editorial-card"
                 >
-                    <CardHeader class="flex flex-col gap-4 border-b border-slate-100 p-6 sm:flex-row sm:items-start sm:justify-between">
+                    <div class="editorial-header">
                         <div>
-                            <CardTitle>{{ editingRouteId != null ? "编辑文章" : "创作新文章" }}</CardTitle>
-                            <CardDescription class="mt-1.5">
+                            <h2 class="editorial-title">
+                                {{ editingRouteId != null ? "编辑文章" : "写点东西" }}
+                            </h2>
+                            <p class="editorial-subtitle">
                                 {{
                                     editingRouteId != null
-                                        ? "修改标题与正文；已发布文章保存后直接更新线上内容。"
-                                        : "记录你的想法，支持超链接、图片、表格与多种排版能力。"
+                                        ? "修改标题与正文，保存后同步更新。"
+                                        : "记录你的想法，支持超链接、图片、表格与多种排版。"
                                 }}
-                            </CardDescription>
+                            </p>
                         </div>
-                        <Button type="button" variant="secondary" size="sm" @click="goBackToList">返回列表</Button>
-                    </CardHeader>
-                    <CardContent class="p-6 pt-5">
+                        <button type="button" class="btn btn--ghost btn--sm" @click="goBackToList">返回列表</button>
+                    </div>
+
+                    <div class="editorial-body">
                         <form class="compose-form" @submit.prevent="onComposeSubmit">
                             <label>
                                 标题
@@ -48,40 +58,33 @@
                                     type="text"
                                 />
                             </label>
+
                             <label>正文</label>
                             <div class="editor-shell">
                                 <aside class="editor-toolbar" aria-label="正文格式">
                                     <select v-model="fontSizeRef" @change="changeFontSize">
-                                        <option value="1">字号 12</option>
-                                        <option value="2">字号 14</option>
-                                        <option value="3">字号 16</option>
-                                        <option value="4">字号 18</option>
-                                        <option value="5">字号 24</option>
+                                        <option value="1">12px</option>
+                                        <option value="2">14px</option>
+                                        <option value="3">16px</option>
+                                        <option value="4">18px</option>
+                                        <option value="5">24px</option>
                                     </select>
-                                    <button type="button" class="secondary" @click="setParagraph('P')">正文</button>
-                                    <button type="button" class="secondary" @click="setParagraph('H2')">H2</button>
-                                    <button type="button" class="secondary" @click="setParagraph('H3')">H3</button>
-                                    <button type="button" class="secondary" @click="applyCommand('bold')">加粗</button>
-                                    <button type="button" class="secondary" @click="applyCommand('italic')">斜体</button>
-                                    <button type="button" class="secondary" @click="applyCommand('underline')">下划线</button>
-                                    <button type="button" class="secondary" @click="applyCommand('strikeThrough')">删除线</button>
-                                    <button type="button" class="secondary" @click="applyCommand('insertUnorderedList')">
-                                        无序列表
-                                    </button>
-                                    <button type="button" class="secondary" @click="applyCommand('insertOrderedList')">
-                                        有序列表
-                                    </button>
-                                    <button type="button" class="secondary" @click="applyCommand('formatBlock', 'blockquote')">
-                                        引用
-                                    </button>
-                                    <button type="button" class="secondary" @click="applyCommand('insertHorizontalRule')">
-                                        分割线
-                                    </button>
-                                    <button type="button" class="secondary" @click="insertLink">超链接</button>
-                                    <button type="button" class="secondary" @click="applyCommand('unlink')">取消链接</button>
-                                    <button type="button" class="secondary" @click="insertRemoteImage">网络图</button>
-                                    <button type="button" class="secondary" @click="selectImage">上传图片</button>
-                                    <button type="button" class="secondary" @click="insertTable">插入表格</button>
+                                    <button type="button" @click="setParagraph('P')">正文</button>
+                                    <button type="button" @click="setParagraph('H2')">H2</button>
+                                    <button type="button" @click="setParagraph('H3')">H3</button>
+                                    <button type="button" @click="applyCommand('bold')"><b>加粗</b></button>
+                                    <button type="button" @click="applyCommand('italic')"><i>斜体</i></button>
+                                    <button type="button" @click="applyCommand('underline')"><u>下划线</u></button>
+                                    <button type="button" @click="applyCommand('strikeThrough')"><s>删除线</s></button>
+                                    <button type="button" @click="applyCommand('insertUnorderedList')">· 无序列表</button>
+                                    <button type="button" @click="applyCommand('insertOrderedList')">1. 有序列表</button>
+                                    <button type="button" @click="applyCommand('formatBlock', 'blockquote')">引用</button>
+                                    <button type="button" @click="applyCommand('insertHorizontalRule')">分割线</button>
+                                    <button type="button" @click="insertLink">超链接</button>
+                                    <button type="button" @click="applyCommand('unlink')">取消链接</button>
+                                    <button type="button" @click="insertRemoteImage">网络图</button>
+                                    <button type="button" @click="selectImage">上传图片</button>
+                                    <button type="button" @click="insertTable">插入表格</button>
                                     <input
                                         ref="imageInputRef"
                                         type="file"
@@ -97,44 +100,43 @@
                                     @input="syncEditorContent"
                                 ></div>
                             </div>
+
                             <div class="compose-actions">
-                                <Button type="button" variant="secondary" size="sm" @click="loadLatestDraft(true)">
+                                <button type="button" class="btn btn--ghost btn--sm" @click="loadLatestDraft(true)">
                                     加载草稿
-                                </Button>
-                                <Button type="button" variant="secondary" size="sm" @click="saveDraft">保存草稿</Button>
-                                <Button type="submit">{{ editPublished ? "保存修改" : "发布文章" }}</Button>
-                                <span class="text-sm text-slate-500">{{ formMsg }}</span>
+                                </button>
+                                <button type="button" class="btn btn--ghost btn--sm" @click="saveDraft">保存草稿</button>
+                                <button type="submit" class="btn btn--primary">
+                                    {{ editPublished ? "保存修改" : "发布文章" }}
+                                </button>
+                                <span class="text-sm" style="color:#8a817a">{{ formMsg }}</span>
                             </div>
                         </form>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
 
-                <Card v-else key="reading-view" class="p-0 shadow-md">
-                    <CardHeader
-                        class="flex flex-col gap-4 border-b border-slate-100 p-6 sm:flex-row sm:items-center sm:justify-between"
-                    >
+                <!-- ─── List / Detail View ─── -->
+                <div v-else key="reading-view" class="editorial-card">
+                    <div class="editorial-header">
                         <div>
-                            <CardTitle v-if="!currentPostId">文章列表</CardTitle>
-                            <CardTitle v-else>文章详情</CardTitle>
+                            <h2 class="editorial-title">{{ !currentPostId ? "文章" : "详情" }}</h2>
+                            <span v-if="editMode && !currentPostId" class="status-badge status-badge--edit">编辑模式</span>
+                            <span v-if="deleteMode && !currentPostId" class="status-badge status-badge--delete">删除模式</span>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
-                            <span class="text-sm text-slate-500">{{ postCountLabel }}</span>
-                            <span v-if="editMode && !currentPostId" class="text-sm text-amber-800">编辑模式</span>
-                            <span v-if="deleteMode && !currentPostId" class="text-sm text-amber-800">删除模式</span>
-                            <Button v-if="currentPostId" type="button" variant="secondary" size="sm" @click="goBackToList">
-                                返回列表
-                            </Button>
-                            <Button type="button" variant="secondary" size="sm" @click="loadPosts">刷新</Button>
+                            <span class="text-sm" style="color:#8a817a">{{ postCountLabel }}</span>
+                            <button v-if="currentPostId" type="button" class="btn btn--ghost btn--sm" @click="goBackToList">返回</button>
+                            <button type="button" class="btn btn--ghost btn--sm" @click="loadPosts">刷新</button>
                         </div>
-                    </CardHeader>
-                    <CardContent class="p-6 pt-4">
+                    </div>
+
+                    <div class="editorial-body">
                         <Transition name="view-switch" mode="out-in">
+
+                            <!-- Post List -->
                             <div v-if="!currentPostId" key="post-list">
-                                <p v-if="errorMsg" class="mb-3 text-sm text-red-600">{{ errorMsg }}</p>
-                                <p
-                                    v-else-if="!loading && posts.length === 0"
-                                    class="mb-3 text-sm text-slate-500"
-                                >
+                                <p v-if="errorMsg" class="mb-3 text-sm" style="color:#b43c3c">{{ errorMsg }}</p>
+                                <p v-else-if="!loading && posts.length === 0" class="mb-3 text-sm" style="color:#8a817a">
                                     还没有文章，先发布第一篇吧。
                                 </p>
                                 <PostListGrid
@@ -149,60 +151,65 @@
                                     @edit="editPost"
                                 />
                             </div>
+
+                            <!-- Post Detail -->
                             <div v-else key="post-detail" id="post-detail">
-                                <p v-if="detailLoading" class="text-sm text-slate-500">详情加载中...</p>
-                                <p v-else-if="detailErrorMsg" class="text-sm text-red-600">{{ detailErrorMsg }}</p>
+                                <p v-if="detailLoading" class="text-sm" style="color:#8a817a">加载中...</p>
+                                <p v-else-if="detailErrorMsg" class="text-sm" style="color:#b43c3c">{{ detailErrorMsg }}</p>
                                 <article v-else-if="detailPost" class="post-item">
                                     <h4>{{ detailPost.title }}</h4>
                                     <div class="post-content" v-html="detailPost.content"></div>
                                 </article>
                             </div>
                         </Transition>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </Transition>
         </main>
 
+        <!-- ═══ Author Verification Dialog ═══ -->
         <DialogRoot v-model:open="authorModalVisible" @update:open="onAuthorDialogOpen">
             <DialogPortal>
-                <DialogOverlay class="fixed inset-0 z-[100] bg-slate-950/45 backdrop-blur-[1px]" />
+                <DialogOverlay class="dialog-overlay fixed inset-0 z-[100]" />
                 <DialogContent
-                    class="fixed left-1/2 top-[88px] z-[110] w-[min(460px,calc(100vw-24px))] max-h-[calc(100vh-48px)] -translate-x-1/2 overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-xl outline-none"
+                    class="dialog-content fixed left-1/2 top-1/2 z-[110] w-[min(420px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 max-h-[80vh] overflow-y-auto p-6 outline-none"
                 >
-                    <DialogTitle class="text-lg font-semibold text-slate-900">作者验证</DialogTitle>
-                    <DialogDescription class="mt-1 text-sm text-slate-500">通过密码验证后可发布帖子</DialogDescription>
-                    <label class="mt-4 flex flex-col gap-2 text-sm font-semibold text-slate-800">
+                    <DialogTitle class="dialog-title">作者验证</DialogTitle>
+                    <DialogDescription class="dialog-description mt-1 text-sm">输入密码以开启作者模式</DialogDescription>
+                    <label class="mt-4 flex flex-col gap-2 text-sm font-medium" style="color:#6b6560">
                         作者密码
-                        <Input
+                        <input
                             v-model="authorCandidate"
                             type="password"
+                            class="dialog-input"
                             placeholder="请输入作者密码"
                             autocomplete="current-password"
                             @keydown.enter.prevent="verifyAuthor"
                         />
                     </label>
                     <div class="mt-5 flex flex-wrap gap-2">
-                        <Button type="button" @click="verifyAuthor">验证并进入</Button>
-                        <Button type="button" variant="secondary" @click="closeAuthorModal">取消</Button>
+                        <button type="button" class="btn btn--primary" @click="verifyAuthor">验证</button>
+                        <button type="button" class="btn btn--ghost" @click="closeAuthorModal">取消</button>
                     </div>
-                    <p class="mt-3 text-sm text-slate-500">{{ authorMsg }}</p>
+                    <p class="mt-3 text-sm" style="color:#8a817a">{{ authorMsg }}</p>
                 </DialogContent>
             </DialogPortal>
         </DialogRoot>
 
+        <!-- ═══ Author Action Dialog ═══ -->
         <DialogRoot v-model:open="authorActionModalVisible">
             <DialogPortal>
-                <DialogOverlay class="fixed inset-0 z-[100] bg-slate-950/45 backdrop-blur-[1px]" />
+                <DialogOverlay class="dialog-overlay fixed inset-0 z-[100]" />
                 <DialogContent
-                    class="fixed left-1/2 top-[88px] z-[110] w-[min(460px,calc(100vw-24px))] -translate-x-1/2 rounded-xl border border-slate-200 bg-white p-6 shadow-xl outline-none"
+                    class="dialog-content fixed left-1/2 top-1/2 z-[110] w-[min(420px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 p-6 outline-none"
                 >
-                    <DialogTitle class="text-lg font-semibold text-slate-900">作者操作</DialogTitle>
-                    <DialogDescription class="mt-1 text-sm text-slate-500">请选择你要执行的操作。</DialogDescription>
+                    <DialogTitle class="dialog-title">作者操作</DialogTitle>
+                    <DialogDescription class="dialog-description mt-1 text-sm">请选择你要执行的操作。</DialogDescription>
                     <div class="mt-5 flex flex-wrap gap-2">
-                        <Button type="button" @click="openPublishMode">发布帖子</Button>
-                        <Button type="button" variant="destructive" @click="openEditMode">修改帖子</Button>
-                        <Button type="button" variant="destructive" @click="openDeleteMode">删除帖子</Button>
-                        <Button type="button" variant="secondary" @click="closeAuthorActionModal">取消</Button>
+                        <button type="button" class="btn btn--primary" @click="openPublishMode">发布文章</button>
+                        <button type="button" class="btn btn--warm" @click="openEditMode">修改文章</button>
+                        <button type="button" class="btn btn--danger" @click="openDeleteMode">删除文章</button>
+                        <button type="button" class="btn btn--ghost" @click="closeAuthorActionModal">取消</button>
                     </div>
                 </DialogContent>
             </DialogPortal>
@@ -221,9 +228,6 @@ import {
 } from "radix-vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import PostListGrid from "@/components/PostListGrid.vue";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "/api";
 
@@ -246,9 +250,7 @@ const authorModalVisible = ref(false);
 const authorActionModalVisible = ref(false);
 const deleteMode = ref(false);
 const editMode = ref(false);
-/** 当前为 `#/edit/:id` 编辑已有文章时，记录文章 id；`#/write` 新建时为 null */
 const editingRouteId = ref(null);
-/** 正在编辑的文章是否已发布（决定保存走 PUT 还是草稿/发布流程） */
 const editPublished = ref(false);
 
 const formMsg = ref("");
@@ -268,7 +270,6 @@ function apiUrl(path) {
     return `${API_BASE}${path}`;
 }
 
-/** Session cookie (JSESSIONID) must be sent after author login; default fetch omits it on some cross-site cases. */
 function apiFetch(path, init = {}) {
     return fetch(apiUrl(path), { ...init, credentials: "include" });
 }
@@ -302,7 +303,7 @@ async function saveDraft() {
 async function persistDraft(silent = false) {
     if (!isAuthor.value) {
         if (!silent) {
-            formMsg.value = "请先点击作者按钮并验证密码。";
+            formMsg.value = "请先验证作者身份。";
         }
         return;
     }
@@ -321,51 +322,32 @@ async function persistDraft(silent = false) {
         if (editPublished.value && draftId.value) {
             const response = await apiFetch(`/posts/${draftId.value}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    title: draft.title,
-                    content: draft.content,
-                }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: draft.title, content: draft.content }),
             });
             if (!response.ok) {
                 const body = await response.json().catch(() => ({}));
-                if (response.status === 403) {
-                    await logoutAuthor();
-                }
+                if (response.status === 403) await logoutAuthor();
                 throw new Error(body.message ?? `HTTP ${response.status}`);
             }
-            formMsg.value = silent
-                ? `已自动保存于 ${new Date().toLocaleTimeString()}`
-                : "已保存修改。";
-            if (!silent) {
-                await loadPosts();
-            }
+            formMsg.value = silent ? `已自动保存于 ${new Date().toLocaleTimeString()}` : "已保存修改。";
+            if (!silent) await loadPosts();
             return;
         }
 
         const response = await apiFetch("/posts/drafts", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                id: draftId.value,
-                title: draft.title,
-                content: draft.content,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: draftId.value, title: draft.title, content: draft.content }),
         });
         if (!response.ok) {
             const body = await response.json().catch(() => ({}));
-            if (response.status === 403) {
-                await logoutAuthor();
-            }
+            if (response.status === 403) await logoutAuthor();
             throw new Error(body.message ?? `HTTP ${response.status}`);
         }
         const saved = await response.json();
         draftId.value = saved.id ?? draftId.value;
-        formMsg.value = silent ? `草稿自动保存于 ${new Date().toLocaleTimeString()}` : "草稿已保存到数据库（未发布）。";
+        formMsg.value = silent ? `草稿自动保存于 ${new Date().toLocaleTimeString()}` : "草稿已保存。";
     } catch (error) {
         formMsg.value = silent ? `自动保存失败: ${error.message}` : `保存草稿失败: ${error.message}`;
     } finally {
@@ -383,31 +365,23 @@ async function onComposeSubmit() {
 
 async function publishPost() {
     if (!isAuthor.value) {
-        formMsg.value = "请先点击作者按钮并验证密码。";
+        formMsg.value = "请先验证作者身份。";
         return;
     }
     if (!draft.title.trim()) {
         formMsg.value = "请先填写标题再发布。";
         return;
     }
-
     if (!draftId.value) {
         await saveDraft();
-        if (!draftId.value) {
-            return;
-        }
+        if (!draftId.value) return;
     }
-
     formMsg.value = "发布中...";
     try {
-        const response = await apiFetch(`/posts/${draftId.value}/publish`, {
-            method: "POST",
-        });
+        const response = await apiFetch(`/posts/${draftId.value}/publish`, { method: "POST" });
         if (!response.ok) {
             const body = await response.json().catch(() => ({}));
-            if (response.status === 403) {
-                await logoutAuthor();
-            }
+            if (response.status === 403) await logoutAuthor();
             throw new Error(body.message ?? `HTTP ${response.status}`);
         }
         const created = await response.json();
@@ -416,9 +390,7 @@ async function publishPost() {
         draft.content = "";
         editPublished.value = false;
         editingRouteId.value = null;
-        if (editorRef.value) {
-            editorRef.value.innerHTML = "";
-        }
+        if (editorRef.value) editorRef.value.innerHTML = "";
         formMsg.value = "发布成功。";
         deleteMode.value = false;
         editMode.value = false;
@@ -434,9 +406,7 @@ async function loadPostDetail(id) {
     detailErrorMsg.value = "";
     try {
         const response = await apiFetch(`/posts/${id}`);
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         detailPost.value = await response.json();
     } catch (error) {
         detailErrorMsg.value = `详情加载失败: ${error.message}`;
@@ -473,17 +443,13 @@ async function verifyAuthor() {
     try {
         const response = await apiFetch("/posts/author/verify", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ password: authorCandidate.value }),
         });
         if (!response.ok) {
-            const body = await response.json().catch(() => ({}));
-            const hint =
-                response.status === 429
-                    ? "尝试次数过多，请约 1 分钟后再试。"
-                    : body.message ?? "密码错误。";
+            const hint = response.status === 429
+                ? "尝试次数过多，请约 1 分钟后再试。"
+                : (await response.json().catch(() => ({}))).message ?? "密码错误。";
             throw new Error(hint);
         }
         isAuthor.value = true;
@@ -500,21 +466,15 @@ async function verifyAuthor() {
 
 async function logoutAuthor() {
     try {
-        await apiFetch("/posts/author/logout", {
-            method: "POST",
-        });
-    } catch (_error) {
-        // Ignore network errors and clear frontend state anyway.
-    }
+        await apiFetch("/posts/author/logout", { method: "POST" });
+    } catch (_error) {}
     isAuthor.value = false;
     deleteMode.value = false;
     editMode.value = false;
     editPublished.value = false;
     editingRouteId.value = null;
     authorActionModalVisible.value = false;
-    if (currentView.value === "write") {
-        goBackToList();
-    }
+    if (currentView.value === "write") goBackToList();
 }
 
 function goToDetail(id) {
@@ -534,18 +494,14 @@ function goToWrite() {
 }
 
 async function loadPostForEditRoute(id) {
-    if (!isAuthor.value) {
-        return;
-    }
+    if (!isAuthor.value) return;
     draftLoading.value = true;
     formMsg.value = "加载文章...";
     try {
         const response = await apiFetch(`/posts/author/${id}`);
         if (!response.ok) {
             const body = await response.json().catch(() => ({}));
-            if (response.status === 403) {
-                await logoutAuthor();
-            }
+            if (response.status === 403) await logoutAuthor();
             throw new Error(body.message ?? `HTTP ${response.status}`);
         }
         const data = await response.json();
@@ -562,14 +518,12 @@ async function loadPostForEditRoute(id) {
         }
         formMsg.value = editPublished.value
             ? "正在编辑已发布文章，修改可通过保存或自动保存同步。"
-            : "正在编辑草稿，完成后可点击「发布文章」。";
+            : "正在编辑草稿，完成后可发布文章。";
     } catch (error) {
         formMsg.value = `加载失败: ${error.message}`;
         window.location.hash = "";
     } finally {
-        setTimeout(() => {
-            suppressAutoSave.value = false;
-        }, 0);
+        setTimeout(() => { suppressAutoSave.value = false; }, 0);
         draftLoading.value = false;
     }
 }
@@ -659,8 +613,7 @@ function applyCommand(command, value = null) {
 }
 
 function setParagraph(tagName) {
-    const block = (tagName || "P").toLowerCase();
-    applyCommand("formatBlock", block);
+    applyCommand("formatBlock", (tagName || "P").toLowerCase());
 }
 
 function changeFontSize() {
@@ -685,7 +638,6 @@ function insertLink() {
     if (!rawUrl) return;
     const url = rawUrl.trim();
     if (!url) return;
-
     const selectedText = window.getSelection?.()?.toString().trim() || "";
     editorRef.value.focus();
     if (selectedText) {
@@ -693,8 +645,7 @@ function insertLink() {
     } else {
         const linkText = window.prompt("请输入链接显示文字", url) || url;
         document.execCommand(
-            "insertHTML",
-            false,
+            "insertHTML", false,
             `<a href="${url}" target="_blank" rel="noopener noreferrer">${linkText}</a>`,
         );
     }
@@ -718,17 +669,14 @@ function insertTable() {
         formMsg.value = "表格尺寸无效，请输入合理的行列数。";
         return;
     }
-
-    const headCells = Array.from({ length: cols }, (_, index) => `<th>标题${index + 1}</th>`).join("");
+    const headCells = Array.from({ length: cols }, (_, i) => `<th>标题${i + 1}</th>`).join("");
     const bodyRows = Array.from({ length: rows - 1 }, () => {
         const rowCells = Array.from({ length: cols }, () => "<td>内容</td>").join("");
         return `<tr>${rowCells}</tr>`;
     }).join("");
-
     editorRef.value.focus();
     document.execCommand(
-        "insertHTML",
-        false,
+        "insertHTML", false,
         `<table><thead><tr>${headCells}</tr></thead><tbody>${bodyRows || `<tr>${Array.from({ length: cols }, () => "<td>内容</td>").join("")}</tr>`}</tbody></table><p></p>`,
     );
     syncEditorContent();
@@ -737,21 +685,14 @@ function insertTable() {
 async function uploadImage(event) {
     const file = event.target.files?.[0];
     if (!file) return;
-
     const formData = new FormData();
     formData.append("image", file);
-
     formMsg.value = "图片上传中...";
     try {
-        const response = await apiFetch("/uploads/images", {
-            method: "POST",
-            body: formData,
-        });
+        const response = await apiFetch("/uploads/images", { method: "POST", body: formData });
         if (!response.ok) {
             const body = await response.json().catch(() => ({}));
-            if (response.status === 403) {
-                await logoutAuthor();
-            }
+            if (response.status === 403) await logoutAuthor();
             throw new Error(body.message ?? `HTTP ${response.status}`);
         }
         const result = await response.json();
@@ -794,24 +735,16 @@ async function deletePost(id) {
         errorMsg.value = "请先验证作者身份。";
         return;
     }
-    const confirmed = window.confirm("确定要删除这篇帖子吗？删除后无法恢复。");
-    if (!confirmed) return;
-
+    if (!window.confirm("确定要删除这篇帖子吗？删除后无法恢复。")) return;
     try {
-        const response = await apiFetch(`/posts/${id}`, {
-            method: "DELETE",
-        });
+        const response = await apiFetch(`/posts/${id}`, { method: "DELETE" });
         if (!response.ok) {
             const body = await response.json().catch(() => ({}));
-            if (response.status === 403) {
-                await logoutAuthor();
-            }
+            if (response.status === 403) await logoutAuthor();
             throw new Error(body.message ?? `HTTP ${response.status}`);
         }
         await loadPosts();
-        if (currentPostId.value === id) {
-            goBackToList();
-        }
+        if (currentPostId.value === id) goBackToList();
     } catch (error) {
         errorMsg.value = `删除失败: ${error.message}`;
     }
@@ -842,7 +775,6 @@ async function loadLatestDraft(force = false) {
     if (draftLoading.value) return;
     if (!force && draftId.value) return;
     if (!force && (draft.title.trim() || draft.content.trim())) return;
-
     draftLoading.value = true;
     try {
         const response = await apiFetch("/posts/drafts/latest");
@@ -866,13 +798,9 @@ async function loadLatestDraft(force = false) {
         }
         formMsg.value = "已加载最近保存的草稿。";
     } catch (_error) {
-        if (force) {
-            formMsg.value = "加载草稿失败，请稍后重试。";
-        }
+        if (force) formMsg.value = "加载草稿失败，请稍后重试。";
     } finally {
-        setTimeout(() => {
-            suppressAutoSave.value = false;
-        }, 0);
+        setTimeout(() => { suppressAutoSave.value = false; }, 0);
         draftLoading.value = false;
     }
 }
@@ -886,9 +814,7 @@ function clearAutoSaveTimer() {
 
 function scheduleAutoSave() {
     clearAutoSaveTimer();
-    autoSaveTimer.value = setTimeout(() => {
-        persistDraft(true);
-    }, 1200);
+    autoSaveTimer.value = setTimeout(() => { persistDraft(true); }, 1200);
 }
 
 watch(
