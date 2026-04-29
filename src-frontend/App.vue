@@ -172,7 +172,7 @@
             <DialogPortal>
                 <DialogOverlay class="dialog-overlay fixed inset-0 z-[100]" />
                 <DialogContent
-                    class="dialog-content fixed left-1/2 top-1/2 z-[110] w-[min(420px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 max-h-[80vh] overflow-y-auto p-6 outline-none"
+                    class="dialog-content fixed left-1/2 top-1/2 z-[110] w-[min(520px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 max-h-[80vh] overflow-y-auto p-6 outline-none"
                 >
                     <DialogTitle class="dialog-title">作者验证</DialogTitle>
                     <DialogDescription class="dialog-description mt-1 text-sm">输入密码以开启作者模式</DialogDescription>
@@ -187,7 +187,7 @@
                             @keydown.enter.prevent="verifyAuthor"
                         />
                     </label>
-                    <div class="mt-5 flex flex-wrap gap-2">
+                    <div class="mt-5 flex items-center gap-3">
                         <button type="button" class="btn btn--primary" @click="verifyAuthor">验证</button>
                         <button type="button" class="btn btn--ghost" @click="closeAuthorModal">取消</button>
                     </div>
@@ -201,15 +201,17 @@
             <DialogPortal>
                 <DialogOverlay class="dialog-overlay fixed inset-0 z-[100]" />
                 <DialogContent
-                    class="dialog-content fixed left-1/2 top-1/2 z-[110] w-[min(420px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 p-6 outline-none"
+                    class="dialog-content fixed left-1/2 top-1/2 z-[110] w-[min(520px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 p-6 outline-none"
                 >
                     <DialogTitle class="dialog-title">作者操作</DialogTitle>
                     <DialogDescription class="dialog-description mt-1 text-sm">请选择你要执行的操作。</DialogDescription>
-                    <div class="mt-5 flex flex-wrap gap-2">
-                        <button type="button" class="btn btn--primary" @click="openPublishMode">发布文章</button>
-                        <button type="button" class="btn btn--warm" @click="openEditMode">修改文章</button>
-                        <button type="button" class="btn btn--danger" @click="openDeleteMode">删除文章</button>
-                        <button type="button" class="btn btn--ghost" @click="closeAuthorActionModal">取消</button>
+                    <div class="mt-6 flex flex-col gap-3">
+                        <button type="button" class="btn btn--primary w-full justify-center py-3" @click="openPublishMode">发布文章</button>
+                        <button type="button" class="btn btn--warm w-full justify-center py-3" @click="openEditMode">修改文章</button>
+                        <button type="button" class="btn btn--danger w-full justify-center py-3" @click="openDeleteMode">删除文章</button>
+                        <div class="mt-2 pt-4 border-t border-[#ede7e0]">
+                            <button type="button" class="btn btn--ghost w-full justify-center py-2.5" @click="closeAuthorActionModal">取消</button>
+                        </div>
                     </div>
                 </DialogContent>
             </DialogPortal>

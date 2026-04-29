@@ -105,6 +105,92 @@
     width: 100%;
 }
 
+/* ── Buttons ───────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: "Noto Sans SC", sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn--primary {
+    background: #c2594a;
+    color: #fff;
+}
+
+.btn--primary:hover {
+    background: #a94a3e;
+}
+
+.btn--warm {
+    background: #cc8a5b;
+    color: #fff;
+}
+
+.btn--warm:hover {
+    background: #b5764a;
+}
+
+.btn--danger {
+    background: #b43c3c;
+    color: #fff;
+}
+
+.btn--danger:hover {
+    background: #962e2e;
+}
+
+.btn--ghost {
+    background: transparent;
+    color: #6b6560;
+    border: 1px solid #e5ddd5;
+}
+
+.btn--ghost:hover {
+    background: rgba(194, 89, 74, 0.06);
+    color: #c2594a;
+    border-color: rgba(194, 89, 74, 0.2);
+}
+
+.btn--sm {
+    padding: 5px 12px;
+    font-size: 11px;
+}
+
+/* ── Dialog Input ──────────────────────────────────── */
+.dialog-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e5ddd5;
+    border-radius: 0;
+    font-size: 14px;
+    font-family: "Noto Sans SC", sans-serif;
+    background: rgba(255, 255, 255, 0.7);
+    color: #1e1b18;
+    transition: border-color 0.2s ease;
+}
+
+.dialog-input:focus {
+    outline: none;
+    border-color: #c2594a;
+    box-shadow: 0 0 0 3px rgba(194, 89, 74, 0.08);
+}
+
+.dialog-input::placeholder {
+    color: #b5ada4;
+}
+
 /* ── Editorial Card (used for main content panels) ─── */
 .editorial-card {
     background: rgba(255, 255, 255, 0.65);
