@@ -98,6 +98,7 @@
                                     class="rich-editor"
                                     contenteditable="true"
                                     @input="syncEditorContent"
+                                    @paste="handlePaste"
                                 ></div>
                             </div>
 
@@ -682,6 +683,35 @@ function insertTable() {
         `<table><thead><tr>${headCells}</tr></thead><tbody>${bodyRows || `<tr>${Array.from({ length: cols }, () => "<td>内容</td>").join("")}</tr>`}</tbody></table><p></p>`,
     );
     syncEditorContent();
+}
+
+async function handlePaste(event) {
+    const items = event.clipboardData?.items;
+    if (!items) return;
+    for (const item of items) {
+        if (item.type.startsWith("image/")) {
+            event.preventDefault();
+            const file = item.getAsFile();
+            if (!file) continue;
+            formMsg.value = "图片上传中...";
+            try {
+                const formData = new FormData();
+                formData.append("image", file);
+                const response = await apiFetch("/uploads/images", { method: "POST", body: formData });
+                if (!response.ok) {
+                    const body = await response.json().catch(() => ({}));
+                    if (response.status === 403) await logoutAuthor();
+                    throw new Error(body.message ?? `HTTP ${response.status}`);
+                }
+                const result = await response.json();
+                applyCommand("insertImage", result.url);
+                formMsg.value = "图片已插入正文。";
+            } catch (error) {
+                formMsg.value = `图片上传失败: ${error.message}`;
+            }
+            return;
+        }
+    }
 }
 
 async function uploadImage(event) {
