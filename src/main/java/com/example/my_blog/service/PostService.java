@@ -5,6 +5,7 @@ import com.example.my_blog.domain.PostContent;
 import com.example.my_blog.domain.PostMeta;
 import com.example.my_blog.dto.request.CreatePostRequest;
 import com.example.my_blog.dto.request.SaveDraftRequest;
+import com.example.my_blog.dto.request.UpdatePostRequest;
 import com.example.my_blog.dto.response.PostDetailResponse;
 import com.example.my_blog.dto.response.PostListItemResponse;
 import com.example.my_blog.exception.NotFoundException;
@@ -76,6 +77,40 @@ public class PostService {
         if (postContent == null) {
             throw new NotFoundException("Post content not found: " + id);
         }
+
+        return toDetail(postMeta, postContent);
+    }
+
+    @Transactional(readOnly = true)
+    public PostDetailResponse getByIdForAuthor(Long id) {
+        PostMeta postMeta = postMetaMapper.selectById(id);
+        if (postMeta == null) {
+            throw new NotFoundException("Post not found: " + id);
+        }
+        PostContent postContent = postContentMapper.selectById(id);
+        if (postContent == null) {
+            throw new NotFoundException("Post content not found: " + id);
+        }
+        return toDetail(postMeta, postContent);
+    }
+
+    @Transactional
+    public PostDetailResponse updatePost(Long id, UpdatePostRequest request) {
+        PostMeta postMeta = postMetaMapper.selectById(id);
+        if (postMeta == null) {
+            throw new NotFoundException("Post not found: " + id);
+        }
+        PostContent postContent = postContentMapper.selectById(id);
+        if (postContent == null) {
+            throw new NotFoundException("Post content not found: " + id);
+        }
+
+        postMeta.setTitle(request.title());
+        postMeta.setUpdatedAt(LocalDateTime.now());
+        postMetaMapper.updateById(postMeta);
+
+        postContent.setContent(request.content());
+        postContentMapper.updateById(postContent);
 
         return toDetail(postMeta, postContent);
     }

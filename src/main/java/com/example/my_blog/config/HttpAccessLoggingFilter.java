@@ -162,7 +162,7 @@ public class HttpAccessLoggingFilter extends OncePerRequestFilter {
             log.info("│  requestBody id={} ── (empty)", requestId);
             return;
         }
-        Charset charset = resolveCharset(request.getCharacterEncoding());
+        Charset charset = resolveHttpBodyCharsetForLog(requestContentType, request.getCharacterEncoding(), buf);
         String raw = new String(buf, charset);
         String safe = redactSensitive(raw);
         log.info(
@@ -192,7 +192,7 @@ public class HttpAccessLoggingFilter extends OncePerRequestFilter {
             log.info("│  responseBody id={} ── (empty)", requestId);
             return;
         }
-        Charset charset = resolveCharset(response.getCharacterEncoding());
+        Charset charset = resolveHttpBodyCharsetForLog(respType, response.getCharacterEncoding(), buf);
         String raw = new String(buf, charset);
         String safe = redactSensitive(raw);
         if (statusIsError(response.getStatus())) {
@@ -223,6 +223,88 @@ public class HttpAccessLoggingFilter extends OncePerRequestFilter {
         } catch (Exception ex) {
             return StandardCharsets.UTF_8;
         }
+    }
+
+    /**
+     * 将响应体字节解码为日志字符串时使用的字符集。
+     * <p>
+     * JSON 等响应体实际是 UTF-8，但 {@link jakarta.servlet.ServletResponse#getCharacterEncoding()} 在未显式设置时
+     * 常为 ISO-8859-1（Servlet 默认），若按该编码解码会把中文打成乱码。优先解析 Content-Type 中的 charset，
+     * 并对常见文本/JSON 类型在无 charset 时默认 UTF-8；若 Content-Type 缺失但字节像 JSON/UTF-8，则回退 UTF-8。
+     */
+    private static Charset resolveHttpBodyCharsetForLog(String contentType, String servletCharacterEncoding, byte[] buf) {
+        Charset fromContentType = parseCharsetFromContentTypeHeader(contentType);
+        if (fromContentType != null) {
+            return fromContentType;
+        }
+        if (contentType != null) {
+            String lower = contentType.toLowerCase(Locale.ROOT);
+            if (lower.contains("application/json")
+                    || lower.contains("application/problem+json")
+                    || lower.contains("application/xml")
+                    || lower.contains("text/html")
+                    || lower.contains("text/xml")
+                    || lower.contains("text/plain")
+                    || lower.contains("application/javascript")) {
+                return StandardCharsets.UTF_8;
+            }
+        }
+        Charset servletCharset = resolveCharset(servletCharacterEncoding);
+        if (StandardCharsets.ISO_8859_1.equals(servletCharset) && looksLikeUtf8JsonOrText(buf)) {
+            return StandardCharsets.UTF_8;
+        }
+        return servletCharset;
+    }
+
+    private static Charset parseCharsetFromContentTypeHeader(String contentType) {
+        if (contentType == null || contentType.isBlank()) {
+            return null;
+        }
+        int idx = contentType.toLowerCase(Locale.ROOT).indexOf("charset=");
+        if (idx < 0) {
+            return null;
+        }
+        String rest = contentType.substring(idx + "charset=".length()).trim();
+        if (rest.startsWith("\"")) {
+            int end = rest.indexOf('"', 1);
+            if (end > 1) {
+                rest = rest.substring(1, end);
+            }
+        } else {
+            int semi = rest.indexOf(';');
+            if (semi >= 0) {
+                rest = rest.substring(0, semi);
+            }
+        }
+        rest = rest.trim();
+        if (rest.isEmpty()) {
+            return null;
+        }
+        try {
+            return Charset.forName(rest);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    /**
+     * 在 Content-Type 未标明 charset、但 Servlet 仍报告 ISO-8859-1 时，用简单启发式判断是否为 UTF-8 文本/JSON。
+     */
+    private static boolean looksLikeUtf8JsonOrText(byte[] buf) {
+        if (buf == null || buf.length == 0) {
+            return false;
+        }
+        byte b0 = buf[0];
+        if (b0 == '{' || b0 == '[') {
+            return true;
+        }
+        if (buf.length >= 3
+                && (buf[0] & 0xFF) == 0xEF
+                && (buf[1] & 0xFF) == 0xBB
+                && (buf[2] & 0xFF) == 0xBF) {
+            return true;
+        }
+        return false;
     }
 
     private static String redactSensitive(String raw) {

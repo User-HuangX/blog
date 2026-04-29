@@ -38,3 +38,26 @@ node_modules/
 src-frontend/node_modules/
 src-frontend/dist/
 package-lock.json
+
+### OS / Editor ###
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+### Environment / Secrets ###
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+### Logs ###
+*.log
+logs/
+
+### Temp / Cache ###
+*.tmp
+*.bak
+.claude/

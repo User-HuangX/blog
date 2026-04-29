@@ -1,12 +1,9 @@
+# 远程服务器专用：仅使用已 load 的镜像，不包含 build 上下文（由 build-images.sh 下发）
 services:
   app:
     image: my_blog_app:local
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: my_blog_app
     environment:
-      # 与 nginx 中 proxy_pass app:8080 一致（application 默认 19080）
       SERVER_PORT: "8080"
       SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST:-101.34.250.167}:${DB_PORT:-5432}/${DB_NAME:-my_blog}
       SPRING_DATASOURCE_USERNAME: ${DB_USER:-my_blog}
@@ -19,13 +16,9 @@ services:
 
   frontend:
     image: my_blog_frontend:local
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
     container_name: my_blog_frontend
     depends_on:
       - app
     ports:
       - "80:80"
     restart: unless-stopped
-
