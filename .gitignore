@@ -1,0 +1,64 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.m2
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+*.tar
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Frontend ###
+node_modules/
+src-frontend/node_modules/
+src-frontend/dist/
+package-lock.json
+
+### OS / Editor ###
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+### Environment / Secrets ###
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+### Logs ###
+*.log
+logs/
+
+### Temp / Cache ###
+*.tmp
+*.bak
+.claude/
+.m2/

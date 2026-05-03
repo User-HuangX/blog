@@ -1,0 +1,31 @@
+services:
+  app:
+    image: my_blog_app:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my_blog_app
+    environment:
+      # 与 nginx 中 proxy_pass app:8080 一致（application 默认 19080）
+      SERVER_PORT: "8080"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST:-localhost}:${DB_PORT:-5432}/${DB_NAME:-my_blog}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-my_blog}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_SQL_INIT_MODE: ${SPRING_SQL_INIT_MODE:-never}
+      BLOG_AUTHOR_PASSWORD: ${BLOG_AUTHOR_PASSWORD}
+    expose:
+      - "8080"
+    restart: unless-stopped
+
+  frontend:
+    image: my_blog_frontend:local
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: my_blog_frontend
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
