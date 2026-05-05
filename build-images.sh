@@ -14,6 +14,14 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT_DIR"
 
+# 自动加载 .env 文件中的环境变量
+if [[ -f "$ROOT_DIR/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$ROOT_DIR/.env"
+  set +a
+fi
+
 DEPLOY_HOST="${DEPLOY_HOST:-}"
 DEPLOY_USER="${DEPLOY_USER:-}"
 # 未设置时，在远程使用登录用户家目录（如 /home/ubuntu）
