@@ -13,6 +13,7 @@
         box-sizing: border-box;
     }
 
+
     html {
         scroll-behavior: smooth;
     }
@@ -26,9 +27,8 @@
         background-color: #f5f0eb;
         color: #1e1b18;
         /* Subtle paper-grain texture */
-        background-image:
-            radial-gradient(ellipse at 20% 50%, rgba(194, 89, 74, 0.03) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 20%, rgba(204, 160, 101, 0.05) 0%, transparent 50%);
+        background-image: radial-gradient(ellipse at 20% 50%, rgba(194, 89, 74, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(204, 160, 101, 0.05) 0%, transparent 50%);
         background-attachment: fixed;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -79,10 +79,10 @@
     right: 0;
     height: 1px;
     background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(194, 89, 74, 0.25) 50%,
-        transparent 100%
+            90deg,
+            transparent 0%,
+            rgba(194, 89, 74, 0.25) 50%,
+            transparent 100%
     );
 }
 

@@ -11,16 +11,7 @@ import com.example.my_blog.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +26,16 @@ public class PostController {
     public PostController(PostService postService, AuthorSessionService authorSessionService) {
         this.postService = postService;
         this.authorSessionService = authorSessionService;
+    }
+
+    private static String resolveAuthorPassword(AuthorVerifyRequest body, String headerPassword) {
+        if (body != null && body.password() != null && !body.password().isBlank()) {
+            return body.password().trim();
+        }
+        if (headerPassword != null && !headerPassword.isBlank()) {
+            return headerPassword.trim();
+        }
+        return null;
     }
 
     @GetMapping
@@ -54,34 +55,16 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public PostDetailResponse update(
-            @PathVariable Long id,
-            @RequestBody @Valid UpdatePostRequest body,
-            HttpServletRequest request
-    ) {
+    public PostDetailResponse update(@PathVariable Long id, @RequestBody @Valid UpdatePostRequest body, HttpServletRequest request) {
         authorSessionService.requireAuthor(request);
         return postService.updatePost(id, body);
     }
 
     @PostMapping("/author/verify")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void verifyAuthor(
-            @RequestBody(required = false) AuthorVerifyRequest body,
-            @RequestHeader(name = "X-Author-Password", required = false) String headerPassword,
-            HttpServletRequest request
-    ) {
+    public void verifyAuthor(@RequestBody(required = false) AuthorVerifyRequest body, @RequestHeader(name = "X-Author-Password", required = false) String headerPassword, HttpServletRequest request) {
         String providedPassword = resolveAuthorPassword(body, headerPassword);
         authorSessionService.verifyAndLogin(providedPassword, request);
-    }
-
-    private static String resolveAuthorPassword(AuthorVerifyRequest body, String headerPassword) {
-        if (body != null && body.password() != null && !body.password().isBlank()) {
-            return body.password().trim();
-        }
-        if (headerPassword != null && !headerPassword.isBlank()) {
-            return headerPassword.trim();
-        }
-        return null;
     }
 
     @GetMapping("/author/status")
@@ -97,19 +80,13 @@ public class PostController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostDetailResponse create(
-            @RequestBody @Valid CreatePostRequest request,
-            HttpServletRequest httpRequest
-    ) {
+    public PostDetailResponse create(@RequestBody @Valid CreatePostRequest request, HttpServletRequest httpRequest) {
         authorSessionService.requireAuthor(httpRequest);
         return postService.create(request);
     }
 
     @PostMapping("/drafts")
-    public PostDetailResponse saveDraft(
-            @RequestBody @Valid SaveDraftRequest request,
-            HttpServletRequest httpRequest
-    ) {
+    public PostDetailResponse saveDraft(@RequestBody @Valid SaveDraftRequest request, HttpServletRequest httpRequest) {
         authorSessionService.requireAuthor(httpRequest);
         return postService.saveDraft(request);
     }

@@ -1,13 +1,13 @@
 <script setup>
-import { cn } from "@/lib/utils";
+import {cn} from "@/lib/utils";
 
 const props = defineProps({
-    class: { type: null, default: undefined },
+  class: {type: null, default: undefined},
 });
 </script>
 
 <template>
-    <div :class="cn('flex flex-col gap-1.5 p-6 pb-0', props.class)">
-        <slot />
-    </div>
+  <div :class="cn('flex flex-col gap-1.5 p-6 pb-0', props.class)">
+    <slot/>
+  </div>
 </template>
